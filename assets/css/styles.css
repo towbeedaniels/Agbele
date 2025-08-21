@@ -13,6 +13,9 @@ html, body {
 body {
   background: var(--brand-light);
   color: var(--bs-body-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .navbar-brand {
@@ -51,6 +54,10 @@ body {
 .footer {
   background: #ffffff;
   border-top: 1px solid rgba(15,23,42,0.06);
+}
+
+main {
+  flex: 1 0 auto;
 }
 
 .avatar {
