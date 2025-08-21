@@ -60,6 +60,43 @@ main {
   flex: 1 0 auto;
 }
 
+/* Full-viewport hero carousel */
+.hero-full {
+  position: relative;
+}
+
+.hero-full .carousel,
+.hero-full .carousel-inner,
+.hero-full .carousel-item {
+  height: 100vh;
+}
+
+.hero-full .carousel-item img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.scroll-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  color: #ffffff;
+  opacity: 0.9;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  animation: bounceY 1.6s infinite;
+}
+
+@keyframes bounceY {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -8px); }
+}
+
 .avatar {
   width: 56px;
   height: 56px;
