@@ -1,0 +1,98 @@
+:root {
+  --brand-primary: #2a9d8f;
+  --brand-secondary: #1f6f78;
+  --brand-accent: #e9c46a;
+  --brand-dark: #0f172a;
+  --brand-light: #f8fafc;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--brand-light);
+  color: #0b1324;
+}
+
+.navbar-brand {
+  font-weight: 700;
+}
+
+.brand-text {
+  color: var(--brand-primary) !important;
+}
+
+.btn-brand {
+  background: var(--brand-primary);
+  color: #fff;
+  border: none;
+}
+
+.btn-brand:hover {
+  background: var(--brand-secondary);
+  color: #fff;
+}
+
+.card-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.08);
+}
+
+.hero {
+  background: linear-gradient(135deg, rgba(42,157,143,0.12), rgba(233,196,106,0.12));
+  border-radius: 1rem;
+}
+
+.footer {
+  background: #ffffff;
+  border-top: 1px solid rgba(15,23,42,0.06);
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.search-input::placeholder {
+  color: #9aa4b2;
+}
+
+.required::after {
+  content: "*";
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+.nav-link.active {
+  color: var(--brand-primary) !important;
+  font-weight: 600;
+}
+
+.calendar-day {
+  min-height: 100px;
+  border: 1px solid #e9ecef;
+  padding: 0.5rem;
+}
+
+.calendar-day.has-event {
+  background: rgba(42,157,143,0.08);
+}
+
+.calendar-day .date-number {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.badge-brand {
+  background-color: rgba(42,157,143,0.15);
+  color: var(--brand-secondary);
+}
+
+
