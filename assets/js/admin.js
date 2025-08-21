@@ -2,6 +2,7 @@ import { STORAGE_KEYS, getItems, saveItems } from './storage.js';
 import { formatDate } from './common.js';
 
 const ADMIN_CRED_KEY = 'community_admin_credentials';
+const ADMIN_AUTH_SESSION = 'community_admin_authed';
 const DEFAULT_CREDS = { username: 'admin', password: 'admin123' };
 
 function ensureCreds() {
@@ -28,6 +29,11 @@ function handleGate() {
   ensureCreds();
   const form = document.getElementById('login-form');
   if (!form) return;
+  // If already authenticated this session, show panel immediately
+  if (sessionStorage.getItem(ADMIN_AUTH_SESSION) === 'true') {
+    showPanel();
+    renderAll();
+  }
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const username = document.getElementById('admin-username').value;
@@ -35,6 +41,9 @@ function handleGate() {
     const error = document.getElementById('login-error');
     error?.classList.add('d-none');
     if (checkCreds(username, password)) {
+      // mark session as authenticated and prevent returning to pre-auth state
+      sessionStorage.setItem(ADMIN_AUTH_SESSION, 'true');
+      history.replaceState({ authed: true }, '', location.href);
       showPanel();
       renderAll();
     } else {
@@ -54,6 +63,24 @@ function handleGate() {
       if (u) u.value = '';
       if (p) p.value = '';
       alert('Credentials reset to default (admin / admin123)');
+    });
+  }
+
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      // clear auth session and redirect (replace) to block back navigation to authed view
+      sessionStorage.removeItem(ADMIN_AUTH_SESSION);
+      document.getElementById('admin-panel').classList.add('d-none');
+      document.getElementById('admin-gate').classList.remove('d-none');
+      const u = document.getElementById('admin-username');
+      const p = document.getElementById('admin-password');
+      if (u) u.value = '';
+      if (p) p.value = '';
+      const error = document.getElementById('login-error');
+      error?.classList.add('d-none');
+      // Replace current history entry to avoid navigating back to an authed state
+      location.replace('admin.html');
     });
   }
 }
@@ -324,5 +351,21 @@ document.addEventListener('DOMContentLoaded', handleGate);
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   try { handleGate(); } catch {}
 }
+
+// Ensure that navigating back to admin page enforces auth state (handles bfcache)
+window.addEventListener('pageshow', () => {
+  const authed = sessionStorage.getItem(ADMIN_AUTH_SESSION) === 'true';
+  const gate = document.getElementById('admin-gate');
+  const panel = document.getElementById('admin-panel');
+  if (gate && panel) {
+    if (authed) {
+      panel.classList.remove('d-none');
+      gate.classList.add('d-none');
+    } else {
+      panel.classList.add('d-none');
+      gate.classList.remove('d-none');
+    }
+  }
+});
 
 
