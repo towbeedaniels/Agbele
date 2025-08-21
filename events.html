@@ -63,7 +63,7 @@
     <script type="module" src="assets/js/common.js"></script>
     <script type="module" src="assets/js/data.js"></script>
     <script type="module">
-      import { STORAGE_KEYS, getItems } from './assets/js/storage.js';
+      import { api } from './assets/js/api.js';
 
       const grid = document.getElementById('calendar-grid');
       const monthLabel = document.getElementById('month-label');
@@ -83,12 +83,12 @@
         return cells;
       }
 
-      function render() {
+      async function render() {
         const y = current.getFullYear();
         const m = current.getMonth();
         monthLabel.textContent = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(current);
         const cells = getMonthMatrix(current);
-        const events = getItems(STORAGE_KEYS.events);
+        const events = await api.listEvents();
 
         grid.innerHTML = '';
         cells.forEach((cellDate) => {

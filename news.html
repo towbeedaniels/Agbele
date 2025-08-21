@@ -52,15 +52,13 @@
     <script type="module" src="assets/js/common.js"></script>
     <script type="module" src="assets/js/data.js"></script>
     <script type="module">
-      import { STORAGE_KEYS, getItems } from './assets/js/storage.js';
+      import { api } from './assets/js/api.js';
       import { formatDate } from './assets/js/common.js';
 
       const list = document.getElementById('news-list');
 
-      function render() {
-        const items = getItems(STORAGE_KEYS.news)
-          .slice()
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
+      async function render() {
+        const items = await api.listNews();
 
         if (items.length === 0) {
           list.innerHTML = '<div class="col-12"><div class="alert alert-light border">No posts yet. Be the first to share news!</div></div>';

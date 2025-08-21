@@ -55,14 +55,15 @@
     <script type="module" src="assets/js/common.js"></script>
     <script type="module" src="assets/js/data.js"></script>
     <script type="module">
-      import { STORAGE_KEYS, getItems } from './assets/js/storage.js';
+      import { api } from './assets/js/api.js';
 
       const list = document.getElementById('member-list');
       const search = document.getElementById('member-search');
 
-      function render(filter = '') {
+      async function render(filter = '') {
         const q = filter.trim().toLowerCase();
-        const items = getItems(STORAGE_KEYS.members).filter(m =>
+        const all = await api.listMembers();
+        const items = all.filter(m =>
           m.name.toLowerCase().includes(q) || (m.bio && m.bio.toLowerCase().includes(q))
         );
 

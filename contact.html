@@ -103,7 +103,7 @@
     <script type="module" src="assets/js/common.js"></script>
     <script type="module" src="assets/js/data.js"></script>
     <script type="module">
-      import { STORAGE_KEYS, getItems, saveItems } from './assets/js/storage.js';
+      import { api } from './assets/js/api.js';
 
       const form = document.getElementById('contact-form');
       form.addEventListener('submit', (e) => {
@@ -117,9 +117,7 @@
           message: document.getElementById('message').value.trim(),
           date: new Date().toISOString()
         };
-        const items = getItems(STORAGE_KEYS.messages);
-        items.push(msg);
-        saveItems(STORAGE_KEYS.messages, items);
+        await api.createMessage(msg);
         new bootstrap.Toast(document.getElementById('submitToast')).show();
         form.reset();
         form.classList.remove('was-validated');

@@ -1,4 +1,5 @@
 import { STORAGE_KEYS, getItems, saveItems } from './storage.js';
+import { api } from './api.js';
 import { formatDate } from './common.js';
 
 const ADMIN_CRED_KEY = 'community_admin_credentials';
@@ -86,9 +87,9 @@ function handleGate() {
 }
 
 // Rendering helpers
-function renderNews() {
+async function renderNews() {
   const container = document.getElementById('admin-news');
-  const items = getItems(STORAGE_KEYS.news).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+  const items = await api.listNews();
   container.innerHTML = items.map(n => `
     <div class="col-12">
       <div class="card">
@@ -110,9 +111,9 @@ function renderNews() {
   `).join('');
 }
 
-function renderEvents() {
+async function renderEvents() {
   const container = document.getElementById('admin-events');
-  const items = getItems(STORAGE_KEYS.events).slice().sort((a, b) => a.date.localeCompare(b.date));
+  const items = await api.listEvents();
   container.innerHTML = items.map(e => `
     <div class="col-12">
       <div class="card">
@@ -132,9 +133,9 @@ function renderEvents() {
   `).join('');
 }
 
-function renderMembers() {
+async function renderMembers() {
   const container = document.getElementById('admin-members');
-  const items = getItems(STORAGE_KEYS.members).slice().sort((a, b) => a.name.localeCompare(b.name));
+  const items = await api.listMembers();
   container.innerHTML = items.map(m => `
     <div class="col-12">
       <div class="card">
@@ -156,9 +157,9 @@ function renderMembers() {
   `).join('');
 }
 
-function renderMessages() {
+async function renderMessages() {
   const container = document.getElementById('admin-messages');
-  const items = getItems(STORAGE_KEYS.messages).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+  const items = await api.listMessages();
   if (items.length === 0) {
     container.innerHTML = '<div class="col-12"><div class="alert alert-light border">No messages yet.</div></div>';
     return;
@@ -192,9 +193,10 @@ function renderAll() {
 document.getElementById('add-news')?.addEventListener('click', () => openEditor('news'));
 document.getElementById('add-event')?.addEventListener('click', () => openEditor('events'));
 document.getElementById('add-member')?.addEventListener('click', () => openEditor('members'));
-document.getElementById('clear-messages')?.addEventListener('click', () => {
+document.getElementById('clear-messages')?.addEventListener('click', async () => {
   if (!confirm('Clear all messages?')) return;
-  saveItems(STORAGE_KEYS.messages, []);
+  const items = await api.listMessages();
+  await Promise.all(items.map(m => api.deleteMessage(m.id)));
   renderMessages();
 });
 
@@ -209,11 +211,12 @@ document.addEventListener('click', (e) => {
   if (action === 'edit') return openEditor(type, id);
 });
 
-function handleDelete(type, id) {
+async function handleDelete(type, id) {
   if (!confirm('Delete this item?')) return;
-  const key = STORAGE_KEYS[type];
-  const items = getItems(key).filter(i => i.id !== id);
-  saveItems(key, items);
+  if (type === 'news') await api.deleteNews(id);
+  if (type === 'events') await api.deleteEvent(id);
+  if (type === 'members') await api.deleteMember(id);
+  if (type === 'messages') await api.deleteMessage(id);
   renderByType(type);
 }
 
@@ -229,13 +232,16 @@ const editModal = new bootstrap.Modal(document.getElementById('editModal'));
 const editForm = document.getElementById('edit-form');
 let currentEdit = { type: null, id: null };
 
-function openEditor(type, id = null) {
+async function openEditor(type, id = null) {
   currentEdit = { type, id };
   document.getElementById('edit-title').textContent = (id ? 'Edit ' : 'Add ') + type.slice(0,1).toUpperCase() + type.slice(1);
   const body = document.getElementById('edit-body');
-  const key = STORAGE_KEYS[type];
-  const items = getItems(key);
-  const existing = id ? items.find(i => i.id === id) : {};
+  let existing = {};
+  if (id) {
+    if (type === 'news') existing = (await api.listNews()).find(x => x.id === id) || {};
+    if (type === 'events') existing = (await api.listEvents()).find(x => x.id === id) || {};
+    if (type === 'members') existing = (await api.listMembers()).find(x => x.id === id) || {};
+  }
 
   if (type === 'news') {
     body.innerHTML = `
@@ -304,11 +310,9 @@ function openEditor(type, id = null) {
   editModal.show();
 }
 
-editForm.addEventListener('submit', (e) => {
+editForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const { type, id } = currentEdit;
-  const key = STORAGE_KEYS[type];
-  const items = getItems(key);
   let updated;
 
   if (type === 'news') {
@@ -339,9 +343,9 @@ editForm.addEventListener('submit', (e) => {
     };
   }
 
-  const index = items.findIndex(i => i.id === id);
-  if (index >= 0) items[index] = updated; else items.push(updated);
-  saveItems(key, items);
+  if (type === 'news') id ? await api.updateNews(id, updated) : await api.createNews(updated);
+  if (type === 'events') id ? await api.updateEvent(id, updated) : await api.createEvent(updated);
+  if (type === 'members') id ? await api.updateMember(id, updated) : await api.createMember(updated);
   editModal.hide();
   renderByType(type);
 });
