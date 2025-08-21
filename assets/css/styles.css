@@ -1,9 +1,9 @@
 :root {
-  --brand-primary: #2a9d8f;
-  --brand-secondary: #1f6f78;
-  --brand-accent: #e9c46a;
-  --brand-dark: #0f172a;
-  --brand-light: #f8fafc;
+  --brand-primary: var(--bs-primary);
+  --brand-secondary: var(--bs-secondary);
+  --brand-accent: var(--bs-warning);
+  --brand-dark: var(--bs-dark);
+  --brand-light: var(--bs-body-bg);
 }
 
 html, body {
@@ -12,7 +12,7 @@ html, body {
 
 body {
   background: var(--brand-light);
-  color: #0b1324;
+  color: var(--bs-body-color);
 }
 
 .navbar-brand {
