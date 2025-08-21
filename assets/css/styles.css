@@ -119,6 +119,57 @@ main {
   font-weight: 600;
 }
 
+/* Transparent, stylish navbar shared across pages */
+.navbar-custom {
+  background-color: rgba(0, 0, 0, 0.35) !important;
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background-color 0.25s ease, backdrop-filter 0.25s ease, border-color 0.25s ease;
+}
+
+.navbar-custom.navbar-solid {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.navbar-dark .navbar-brand {
+  color: #ffffff !important;
+}
+
+.navbar-dark .nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.navbar-dark .nav-link:hover,
+.navbar-dark .nav-link:focus,
+.navbar-dark .nav-link.active {
+  color: #ffffff !important;
+}
+
+.navbar-dark .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.25rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--brand-accent), var(--brand-primary));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.navbar-dark .nav-link:hover::after,
+.navbar-dark .nav-link:focus::after,
+.navbar-dark .nav-link.active::after {
+  transform: scaleX(1);
+}
+
 .calendar-day {
   min-height: 100px;
   border: 1px solid #e9ecef;

@@ -30,4 +30,15 @@ export function setActiveNav() {
 
 document.addEventListener('DOMContentLoaded', setActiveNav);
 
+// Navbar solid-on-scroll toggle
+function handleNavbarScroll() {
+  const nav = document.querySelector('.navbar-custom');
+  if (!nav) return;
+  const solid = window.scrollY > 60;
+  nav.classList.toggle('navbar-solid', solid);
+}
+
+document.addEventListener('scroll', handleNavbarScroll, { passive: true });
+document.addEventListener('DOMContentLoaded', handleNavbarScroll);
+
 
